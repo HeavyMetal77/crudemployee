@@ -1,10 +1,7 @@
 package ua.tarastom.crudemployee.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ua.tarastom.crudemployee.entity.Employee;
 import ua.tarastom.crudemployee.service.EmployeeService;
 
@@ -24,6 +21,22 @@ public class EmployeeRestController {
 
     @GetMapping("/employees/{theId}")
     public Employee getEmployees(@PathVariable int theId) {
-        return employeeService.findEmployee(theId);
+        Employee employee = employeeService.findEmployee(theId);
+        if (employee == null) {
+            throw new RuntimeException("Employee " + theId + " not found");
+        }
+        return employee;
+    }
+
+    @PostMapping("/employees")
+    public Employee createEmployee(@RequestBody Employee employee) {
+        employee.setId(0);
+        Employee theEmployee = employeeService.saveOrUpdate(employee);
+        return theEmployee;
+    }
+
+    @DeleteMapping("/employees/{theId}")
+    public void deleteEmployee(@PathVariable int theId) {
+        employeeService.deleteEmployee(theId);
     }
 }
