@@ -23,20 +23,30 @@ public class EmployeeRestController {
     public Employee getEmployees(@PathVariable int theId) {
         Employee employee = employeeService.findEmployee(theId);
         if (employee == null) {
-            throw new RuntimeException("Employee " + theId + " not found");
+            throw new RuntimeException("Employee id=" + theId + " not found");
         }
         return employee;
     }
 
     @PostMapping("/employees")
     public Employee createEmployee(@RequestBody Employee employee) {
-        employee.setId(0);
-        Employee theEmployee = employeeService.saveOrUpdate(employee);
-        return theEmployee;
+        employee.setId(0); //если установлен 0 - метод добавляет
+        return employeeService.saveOrUpdate(employee);
     }
 
     @DeleteMapping("/employees/{theId}")
-    public void deleteEmployee(@PathVariable int theId) {
+    public String deleteEmployee(@PathVariable int theId) {
+        Employee employee = employeeService.findEmployee(theId);
+        if (employee == null) {
+            throw new RuntimeException("Employee " + theId + " does not exist");
+        }
         employeeService.deleteEmployee(theId);
+        return "Employee id=" + theId + " deleted";
+    }
+
+    @PutMapping("/employees")
+    public Employee updateEmploy(@RequestBody Employee theEmployee) {
+        employeeService.saveOrUpdate(theEmployee);
+        return theEmployee;
     }
 }
