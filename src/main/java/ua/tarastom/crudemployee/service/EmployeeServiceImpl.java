@@ -1,17 +1,50 @@
 package ua.tarastom.crudemployee.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ua.tarastom.crudemployee.dao.EmployeeDAO;
+import ua.tarastom.crudemployee.dao.EmployeeRepository;
 import ua.tarastom.crudemployee.entity.Employee;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
+    //Var.3 using REST API with Spring Data JPA Repository
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Override //    @Transactional - не нужно (предоставляется JpaRepository)
+    public List<Employee> findAll() {
+        return employeeRepository.findAll();
+    }
+
+    @Override
+    public Employee findEmployee(int id) {
+        Optional<Employee> result = employeeRepository.findById(id); //Optional - для проверки на null
+        Employee theEmployee = null;
+        if (result.isPresent()) {
+            theEmployee = result.get();
+        } else {
+            throw new RuntimeException("Employee " + id + " not found");
+        }
+        return theEmployee;
+    }
+
+    @Override
+    public Employee saveOrUpdate(Employee employee) {
+        return employeeRepository.save(employee);
+    }
+
+    @Override
+    public void deleteEmployee(int id) {
+        employeeRepository.deleteById(id);
+    }
+
+
+/*
     @Autowired
     @Qualifier("employeeDAOJPAImpl")
     private EmployeeDAO employeeDAO;
@@ -39,4 +72,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void deleteEmployee(int id) {
         employeeDAO.deleteEmployee(id);
     }
+
+ */
 }
