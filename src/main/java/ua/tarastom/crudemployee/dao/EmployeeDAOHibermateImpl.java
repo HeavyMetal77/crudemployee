@@ -10,7 +10,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Repository
-public class EmployeeDAOHibermateImpl implements EmployeeDAO{
+public class EmployeeDAOHibermateImpl implements EmployeeDAO{ //Var.1 using Hibernate API native method
 
     @Autowired
     private EntityManager entityManager;
@@ -18,7 +18,6 @@ public class EmployeeDAOHibermateImpl implements EmployeeDAO{
     @Override
     public List<Employee> findAll() {
         Session currentSession = entityManager.unwrap(Session.class);
-        //Var.1 using Hibernate API native method
         Query<Employee> theQuery = currentSession.createQuery("from Employee", Employee.class);
         List<Employee> employees = theQuery.getResultList();
         return employees;
